@@ -1,5 +1,11 @@
 # histological-analysis
-Matlab code to analyze stained histological sections in Lonafarnib improves cardiovascular function and survival in a mouse model of Hutchinson-Gilford Progeria Syndrome, eLife, S-I Murtada, N Mikush, M Wang, P Ren, Y Kawamura, AB Ramachandra, DT Braddock, G Tellides, LB Gordon, JD Humphrey
+Matlab code to analyze stained histological sections.
+Run script "histology-main.m". All code is provided.
 
-Run script histology-main. All code is provided.
 MATLAB version: 2017b
+
+Continuum Biomechanics Laboratory
+Supervisor: Dr. Jay Humphrey, Ph.D.
+Department of Biomedical Engineering
+Yale University
+New Haven, CT 06511, USA
