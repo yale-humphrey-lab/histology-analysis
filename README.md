@@ -1,5 +1,5 @@
 # histological-analysis
-Matlab code to analyze stained histological sections.
+MATLAB code to analyze stained histological sections.
 Run script "histology-main.m". All code is provided.
 
 MATLAB version: 2017b
