@@ -26,12 +26,12 @@ if procopt == 1 || procopt == 2
 %     Slow = 0;      Sup = 1;        % Saturation
 %     Llow = 0;      Lup = 0.99;     % Lightness
     
-    % Extract all foreground pixels    %%% David was here 2022 %%%
+    % Extract all foreground pixels    %%% David was here 2022 (Llow should match color_segmentation) %%%
     if strcmpi(stain,'IF') || strcmpi(stain,'dPSR')
         % HSL parameters to isolate all NON-BACKGROUND pixels
         Hlow = 0;      Hup = 360;      % Hue
         Slow = 0;      Sup = 1;        % Saturation
-        Llow = 0.11;   Lup = 0.99;     % Lightness
+        Llow = 0.10;   Lup = 0.99;     % Lightness
         T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','black');
     else
        % HSL parameters to isolate all NON-BACKGROUND pixels
@@ -681,12 +681,12 @@ if procopt == 1 || procopt == 2
         HL1 = colorspace('RGB->HSL',IL1);
         HL2 = colorspace('RGB->HSL',IL2);
         
-        %%% David was here 2022 %%%
+        %%% David was here 2022 (Llow should match color_segmentation) %%%
         if strcmpi(stain,'IF') || strcmpi(stain,'dPSR')
             % HSL parameters to isolate all NON-BLACK pixels
             Hlow = 0;    Hup = 360;      % Hue
             Slow = 0;    Sup = 1;        % Saturation
-            Llow = 0.11; Lup = 0.99;     % Lightness
+            Llow = 0.10; Lup = 0.99;     % Lightness
             
             % Isolate all non-white pixels and percentages between the current layers 
             L1 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],HL1,[],'g','black');      pixL1 = length(find(L1(:,:,3) < 1));      pL1 = pixL1/pixtot;
