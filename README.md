@@ -1,4 +1,4 @@
-# histological-analysis
+# histology-analysis
 MATLAB code to analyze stained histological sections.
 Run script "histology-main.m". All code is provided.
 
