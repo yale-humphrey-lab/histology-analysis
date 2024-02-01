@@ -332,7 +332,7 @@ end
 fname = outnm{IDX,:};
 
 % Compile path to save image
-savepath = strcat(path,groupnm,'\',fname,'\');
+savepath = strcat(path,groupnm,'/',fname,'/');
 
 % Create new directory, if needed
 if ~isdir(savepath);    mkdir(savepath);    end
@@ -351,7 +351,7 @@ end
 if exist('Ibf','var')
     
     % Compile path to save image
-    bfsavepath = strcat(path,groupnm,'\',bfname,'\');
+    bfsavepath = strcat(path,groupnm,'/',bfname,'/');
     
     % Create new directory, if needed
     if ~isdir(bfsavepath);    mkdir(bfsavepath);    end

@@ -552,8 +552,8 @@ if procopt == 1 || procopt == 2
             layerlc = cat(2,layernm(numseg),layernm(numseg+1));
             layeruc = cat(2,upper(layernm(numseg)),upper(layernm(numseg+1)));
             
-            IL1 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext));
-            IL2 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext));
+            IL1 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext));
+            IL2 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext));
             
         elseif strcmpi(tissue,'Artery / Vasculature') && single;
             
@@ -562,24 +562,24 @@ if procopt == 1 || procopt == 2
                 layerlc = cat(2,layernm(numseg+1),layernm(numseg+2));
                 layeruc = cat(2,upper(layernm(numseg+1)),upper(layernm(numseg+2)));
                 
-                IL1 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext));
-                IL2 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+2},'.',ext));
+                IL1 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext));
+                IL2 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+2},'.',ext));
                 
             elseif numseg == 1 && length(layernm) == 2;
                 
                 layerlc = cat(2,layernm(numseg),layernm(numseg+1));
                 layeruc = cat(2,upper(layernm(numseg)),upper(layernm(numseg+1)));
                 
-                IL1 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext));
-                IL2 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext));
+                IL1 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext));
+                IL2 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext));
                 
             elseif numseg == 2;
                 
                 layerlc = cat(2,layernm(numseg-1),layernm(numseg));
                 layeruc = cat(2,upper(layernm(numseg-1)),upper(layernm(numseg)));
                 
-                IL1 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg-1},'.',ext));
-                IL2 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext));
+                IL1 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg-1},'.',ext));
+                IL2 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext));
                 
             end
             
@@ -588,8 +588,8 @@ if procopt == 1 || procopt == 2
             layerlc = cat(2,layernm(end-numseg),layernm(end-numseg+1));
             layeruc = cat(2,upper(layernm(end-numseg)),upper(layernm(end-numseg+1)));
             
-            IL1 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg},'.',ext));
-            IL2 = imread(strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg+1},'.',ext));
+            IL1 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg},'.',ext));
+            IL2 = imread(strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg+1},'.',ext));
             
         end
         
@@ -719,41 +719,41 @@ if procopt == 1 || procopt == 2
         if strcmpi(tissue,'Artery / Vasculature') && numseg == 1 && length(layernm) == 3;
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+2},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+2},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+2},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+2},'.',ext),ext);
             end
             
         elseif strcmpi(tissue,'Artery / Vasculature') && numseg == 1 && length(layernm) == 2;
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
             end
             
         elseif strcmpi(tissue,'Artery / Vasculature') && numseg == 2;
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg-1},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg-1},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg-1},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg-1},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
             end
             
         elseif ~strcmpi(tissue,'Artery / Vasculature')
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
             end
             
         end
@@ -763,11 +763,11 @@ if procopt == 1 || procopt == 2
         if strcmpi(tissue,'Artery / Vasculature') && ~single;
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
             end
             
         elseif strcmpi(tissue,'Artery / Vasculature') && single;
@@ -775,31 +775,31 @@ if procopt == 1 || procopt == 2
             if numseg == 1 && length(layernm) == 3;
                 
                 if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+2},'.',ext),ext,'Quality',100);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+2},'.',ext),ext,'Quality',100);
                 else
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+2},'.',ext),ext);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+2},'.',ext),ext);
                 end
                 
             elseif numseg == 1 && length(layernm) == 2;
                 
                 if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext,'Quality',100);
                 else
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg+1},'.',ext),ext);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg+1},'.',ext),ext);
                 end
                 
             elseif numseg == 2;
                 
                 if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg-1},'.',ext),ext,'Quality',100);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg-1},'.',ext),ext,'Quality',100);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext,'Quality',100);
                 else
-                    imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg-1},'.',ext),ext);
-                    imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{numseg},'.',ext),ext);
+                    imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg-1},'.',ext),ext);
+                    imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{numseg},'.',ext),ext);
                 end
                 
             end
@@ -807,11 +807,11 @@ if procopt == 1 || procopt == 2
         elseif ~strcmpi(tissue,'Artery / Vasculature');
             
             if strcmpi(ext,'jpg') || strcmpi(ext,'jpeg')
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg},'.',ext),ext,'Quality',100);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg+1},'.',ext),ext,'Quality',100);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg},'.',ext),ext,'Quality',100);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg+1},'.',ext),ext,'Quality',100);
             else
-                imwrite(IL1,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg},'.',ext),ext);
-                imwrite(IL2,strcat(path,groupnm,'\',fname,'\',mfname,'_',layernm{end-numseg+1},'.',ext),ext);
+                imwrite(IL1,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg},'.',ext),ext);
+                imwrite(IL2,strcat(path,groupnm,'/',fname,'/',mfname,'_',layernm{end-numseg+1},'.',ext),ext);
             end
             
         end
@@ -836,27 +836,27 @@ elseif procopt == 3;
         
         % Load layer segmentation images for local wall percentages
         if length(layernm) == 2;
-            fpstr1 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
-            fpstr2 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
+            fpstr1 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
+            fpstr2 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
         elseif length(layernm) == 3;
-            fpstr1 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
-            fpstr2 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
-            fpstr3 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
+            fpstr1 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
+            fpstr2 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
+            fpstr3 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
         elseif length(layernm) == 4;
-            fpstr1 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
-            fpstr2 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
-            fpstr3 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
-            fpstr4 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{4});    IL4 = imread(strcat(fpstr4,'.',ext));    HL4 = colorspace('RGB->HSL',IL4);    HL4_3 = HL4(:,:,3);
+            fpstr1 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
+            fpstr2 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
+            fpstr3 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
+            fpstr4 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{4});    IL4 = imread(strcat(fpstr4,'.',ext));    HL4 = colorspace('RGB->HSL',IL4);    HL4_3 = HL4(:,:,3);
         elseif length(layernm) == 5;
-            fpstr1 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
-            fpstr2 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
-            fpstr3 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
-            fpstr4 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{4});    IL4 = imread(strcat(fpstr4,'.',ext));    HL4 = colorspace('RGB->HSL',IL4);    HL4_3 = HL4(:,:,3);
-            fpstr5 = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_',layernm{5});    IL5 = imread(strcat(fpstr5,'.',ext));    HL5 = colorspace('RGB->HSL',IL5);    HL5_3 = HL5(:,:,3);
+            fpstr1 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{1});    IL1 = imread(strcat(fpstr1,'.',ext));    HL1 = colorspace('RGB->HSL',IL1);    HL1_3 = HL1(:,:,3);
+            fpstr2 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{2});    IL2 = imread(strcat(fpstr2,'.',ext));    HL2 = colorspace('RGB->HSL',IL2);    HL2_3 = HL2(:,:,3);
+            fpstr3 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{3});    IL3 = imread(strcat(fpstr3,'.',ext));    HL3 = colorspace('RGB->HSL',IL3);    HL3_3 = HL3(:,:,3);
+            fpstr4 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{4});    IL4 = imread(strcat(fpstr4,'.',ext));    HL4 = colorspace('RGB->HSL',IL4);    HL4_3 = HL4(:,:,3);
+            fpstr5 = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_',layernm{5});    IL5 = imread(strcat(fpstr5,'.',ext));    HL5 = colorspace('RGB->HSL',IL5);    HL5_3 = HL5(:,:,3);
         end
               
         % Load partition data structure
-        localpart = importdata(strcat(path,groupnm,'\',fname,'\',mfname,'_partition_',char(vartype),'.mat'));
+        localpart = importdata(strcat(path,groupnm,'/',fname,'/',mfname,'_partition_',char(vartype),'.mat'));
 
         % Convert RGB image to HSL image
         H = colorspace('RGB->HSL',I);    H3 = H(:,:,3);    [xsz,ysz,~] = size(H3);
@@ -973,7 +973,7 @@ if ~isempty(wp)
                 txt2 = strcat(txt2,',''Image Name''');
                 txt3 = strcat(txt3,'%s\t\n''');
                 
-                fid = fopen(strcat(path,groupnm,'\All_',groupnm,'_wall percentage.txt'),'w');
+                fid = fopen(strcat(path,groupnm,'/All_',groupnm,'_wall percentage.txt'),'w');
                 
                 eval(strcat('fprintf(fid,',txt1,',',txt2,');'))
                 
@@ -986,7 +986,7 @@ if ~isempty(wp)
                 txt1 = strcat(txt1,'\n''');
                 txt3 = strcat(txt3,'\n''');
                 
-                fid = fopen(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage.txt'),'w');
+                fid = fopen(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage.txt'),'w');
                 
                 eval(strcat('fprintf(fid,',txt1,',',txt2,');'))
                 eval(strcat('fprintf(fid,',txt3,',im,wp);'));
@@ -996,7 +996,7 @@ if ~isempty(wp)
                 txt1 = strcat(txt1,'\n''');
                 txt3 = strcat(txt3,'\n''');
                 
-                fid = fopen(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage_',char(vartype),'.txt'),'w');
+                fid = fopen(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage_',char(vartype),'.txt'),'w');
                 
                 eval(strcat('fprintf(fid,',txt1,',',txt2,');'))
                 
@@ -1014,7 +1014,7 @@ if ~isempty(wp)
                 txt2 = strcat(txt2,',''Image Name''');
                 txt3 = strcat(txt3,'%s\t\n''');
                 
-                fid = fopen(strcat(path,groupnm,'\All_',groupnm,'_wall percentage_',char(vartype),'.txt'),'w');
+                fid = fopen(strcat(path,groupnm,'/All_',groupnm,'_wall percentage_',char(vartype),'.txt'),'w');
 
                 eval(strcat('fprintf(fid,',txt1,',',txt2,');'))
                 
@@ -1051,13 +1051,13 @@ if ~isempty(wp)
         elseif strcmpi(format{II},'.mat');
             
             if procopt == 0;
-                save(strcat(path,groupnm,'\All_',groupnm,'_wall percentage.mat'),'wp');
+                save(strcat(path,groupnm,'/All_',groupnm,'_wall percentage.mat'),'wp');
             elseif procopt == 2;
-                save(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage.mat'),'wp');
+                save(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage.mat'),'wp');
             elseif procopt == 3;
-                save(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage_',char(vartype),'.mat'),'wp');
+                save(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage_',char(vartype),'.mat'),'wp');
             elseif procopt == 4;
-                save(strcat(path,groupnm,'\All_',groupnm,'_wall percentage_',char(vartype),'.mat'),'wp');
+                save(strcat(path,groupnm,'/All_',groupnm,'_wall percentage_',char(vartype),'.mat'),'wp');
             end
             
         end
@@ -1184,7 +1184,7 @@ end
             % Compile data and set file paths based on type of analysis 
             if procopt == 0;
                 
-                header(1,end+1) = {'Image Name'};    fpath = strcat(path,groupnm,'\All_',groupnm,'_wall percentage.xls');
+                header(1,end+1) = {'Image Name'};    fpath = strcat(path,groupnm,'/All_',groupnm,'_wall percentage.xls');
                 
                 for NN = 1:im;    
                     data(NN,:) = cat(2,num2cell([NN wp(NN,:)]),outnm(NN,:));   
@@ -1192,7 +1192,7 @@ end
                                 
             elseif procopt == 2;
                 
-                data = num2cell([1 wp(1,:)]);    fpath = strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage.xls');
+                data = num2cell([1 wp(1,:)]);    fpath = strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage.xls');
                 
             elseif procopt == 3;
                 
@@ -1206,7 +1206,7 @@ end
                     end
                 end
                 
-                fpath = strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage_',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage_',char(vartype),'.xls');
                 
             elseif procopt == 4;
                 
@@ -1225,7 +1225,7 @@ end
                     
                 end
                 
-                fpath = strcat(path,groupnm,'\All_',groupnm,'_wall percentage_',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/All_',groupnm,'_wall percentage_',char(vartype),'.xls');
                 
             end
             
@@ -1253,13 +1253,13 @@ end
             
             % Open workbook and define sheet names
             if procopt == 0;
-                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'\All_',groupnm,'_wall percentage.xls'));
+                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'/All_',groupnm,'_wall percentage.xls'));
             elseif procopt == 2;
-                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage.xls'));
+                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage.xls'));
             elseif procopt == 3;
-                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'\',fname,'\',mfname,'_wall percentage_',char(vartype),'.xls'));
+                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'/',fname,'/',mfname,'_wall percentage_',char(vartype),'.xls'));
             elseif procopt == 4;
-                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'\All_',groupnm,'_wall percentage_',char(vartype),'.xls'));
+                hWorkbook = hExcel.Workbooks.Open(strcat(path,groupnm,'/All_',groupnm,'_wall percentage_',char(vartype),'.xls'));
             end
             
             hWorksheet = hWorkbook.Sheets.Item('Sheet1');    hWorksheet.Name = 'Wall Percentage';

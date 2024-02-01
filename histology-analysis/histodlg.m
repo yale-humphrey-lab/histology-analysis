@@ -74,7 +74,7 @@ elseif strcmpi(method,'processing-options-histo');
     
     Title = 'Processing Options';
     
-    Options.Resize = 'off';
+    Options.Resize = 'on';
     Options.CancelButton = 'on';
     Options.ButtonNames = 'Continue';
     Options.AlignControls = 'on';
@@ -83,7 +83,7 @@ elseif strcmpi(method,'processing-options-histo');
     Formats = {};
     DefAns = struct([]);
     
-    Prompt(end+1,:) = {'----------------------------------------------','',''};
+    Prompt(end+1,:) = {'----------------------','',[]};
     Formats(1,1).type = 'text';
     Formats(1,1).style = 'text';
     Formats(1,1).span = [1 1];
@@ -95,7 +95,7 @@ elseif strcmpi(method,'processing-options-histo');
     Formats(2,1).callback = @(~,~,h,k)(cellfun(@(x)feval(x,h,k),{@(h,k)set(h(k+2),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+4),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+5),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+6),'Enable',switchEnableVar(h(k),1)) }));
     DefAns(1).reset = false;
     
-    Prompt(end+1,:) = {'----------------------------------------------','',''};
+    Prompt(end+1,:) = {'----------------------','',[]};
     Formats(3,1).type = 'text';
     Formats(3,1).style = 'text';
     Formats(3,1).span = [1 1];
@@ -107,7 +107,7 @@ elseif strcmpi(method,'processing-options-histo');
     Formats(4,1).callback = @(~,~,h,k)(cellfun(@(x)feval(x,h,k),{@(h,k)set(h(k-2),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+2),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+3),'Enable',switchEnableVar(h(k),1)); @(h,k)set(h(k+4),'Enable',switchEnableVar(h(k),1)) }));
     DefAns.manual = false;
     
-    Prompt(end+1,:) = {'----------------------------------------------','',''};
+    Prompt(end+1,:) = {'----------------------','',[]};
     Formats(5,1).type = 'text';
     Formats(5,1).style = 'text';
     Formats(5,1).span = [1 1];
@@ -133,7 +133,7 @@ elseif strcmpi(method,'processing-options-histo');
     Formats(8,1).callback = @(~,~,h,k)(cellfun(@(x)feval(x,h,k),{@(h,k)set(h(k-6),'Enable',switchEnableVar3(h(k-2),h(k-1),h(k),1)); @(h,k)set(h(k-4),'Enable',switchEnableVar3(h(k-2),h(k-1),h(k),1)) }));
     DefAns.outer = false;
     
-    Prompt(end+1,:) = {'----------------------------------------------','',''};
+    Prompt(end+1,:) = {'----------------------','',[]};
     Formats(9,1).type = 'text';
     Formats(9,1).style = 'text';
     Formats(9,1).span = [1 1];
@@ -314,13 +314,13 @@ elseif strcmpi(method,'initialize-histo');
     Formats = {};
     DefAns = struct([]);
     
-    if exist(strcat(cd,'\path.mat'),'file') == 0;
+    if exist(strcat(cd,'/path.mat'),'file') == 0;
         upath = userpath;
         
         if strcmpi(upath(end),';')
-            upath = strcat(upath(1:end-1),'\');
+            upath = strcat(upath(1:end-1),'/');
         else
-            upath = strcat(upath,'\');
+            upath = strcat(upath,'/');
         end
         
         ext = 'tif';
@@ -336,16 +336,16 @@ elseif strcmpi(method,'initialize-histo');
         DefAns.path = upath;
         
     else
-        upath = importdata(strcat(cd,'\path.mat'));
+        upath = importdata(strcat(cd,'/path.mat'));
         ext = 'tif';
         
         if isdir(upath) == 0;
             upath = userpath;
             
             if strcmpi(upath(end),';')
-                upath = strcat(upath(1:end-1),'\');
+                upath = strcat(upath(1:end-1),'/');
             else
-                upath = strcat(upath,'\');
+                upath = strcat(upath,'/');
             end
         end
         
@@ -411,7 +411,7 @@ elseif strcmpi(method,'initialize-histo');
     Formats(2,6).size = [3*25.2 6.5*18];
     Formats(2,6).labelloc = 'topleft';
     Formats(2,6).span = [3 1];
-    DefAns.fileform = {'.mat';'.xls'};    %%%% EDIT
+    DefAns.fileform = {'.mat'};    %%%% EDIT
     
     Prompt(end+1,:) = {'Magnification','mago',[]};
     magval = {'60x';'40x';'20x';'10x';'4x';'1x';'Other'};
@@ -424,7 +424,7 @@ elseif strcmpi(method,'initialize-histo');
     Formats(2,7).labelloc = 'topleft';
     Formats(2,7).callback = @(~,~,h,k)set(h(k+1),'String',checkOtherMag(h(k)));
     Formats(2,7).span = [1 1];
-    DefAns.mago = {'20x'};
+    DefAns.mago = {'40x'};
     
     Prompt(end+1,:) = {' ','mag',[]};
     Formats(2,8).type = 'edit';
@@ -581,7 +581,7 @@ elseif strcmpi(method,'initialize-histo');
     Formats(6,6).labelloc = 'topleft';
     Formats(6,6).span = [1 1];
     Formats(6,6).enable = 'off';
-    DefAns.nlayer = 2;    %%%% EDIT
+    DefAns.nlayer = 1;    %%%% EDIT
     
     Prompt(end+1,:) = {'# Rad. Partitions','npr',[]};
     Formats(6,7).type = 'edit';
@@ -683,13 +683,13 @@ elseif strcmpi(method,'initialize-immuno');
     Formats = {};
     DefAns = struct([]);
     
-    if exist(strcat(cd,'\path.mat'),'file') == 0;
+    if exist(strcat(cd,'/path.mat'),'file') == 0;
         upath = userpath;
         
         if strcmpi(upath(end),';')
-            upath = strcat(upath(1:end-1),'\');
+            upath = strcat(upath(1:end-1),'/');
         else
-            upath = strcat(upath,'\');
+            upath = strcat(upath,'/');
         end
         
         ext = 'tif';
@@ -705,16 +705,16 @@ elseif strcmpi(method,'initialize-immuno');
         DefAns.path = upath;
         
     else
-        upath = importdata(strcat(cd,'\path.mat'));
+        upath = importdata(strcat(cd,'/path.mat'));
         ext = 'tif';
         
         if isdir(upath) == 0;
             upath = userpath;
             
             if strcmpi(upath(end),';')
-                upath = strcat(upath(1:end-1),'\');
+                upath = strcat(upath(1:end-1),'/');
             else
-                upath = strcat(upath,'\');
+                upath = strcat(upath,'/');
             end
         end
         
@@ -792,7 +792,7 @@ elseif strcmpi(method,'initialize-immuno');
     Formats(2,7).labelloc = 'topleft';
     Formats(2,7).callback = @(~,~,h,k)set(h(k+1),'String',checkOtherMag(h(k)));
     Formats(2,7).span = [1 1];
-    DefAns.mago = {'20x'};
+    DefAns.mago = {'40x'};
     
     Prompt(end+1,:) = {' ','mag',[]};
     Formats(2,8).type = 'edit';
@@ -1057,8 +1057,8 @@ end
         
         upath = get(h,'String');
         
-        if strcmp(upath(end),'\') == 0
-            path = strcat(upath,'\');
+        if strcmp(upath(end),'/') == 0
+            path = strcat(upath,'/');
         else
             path = upath;
         end

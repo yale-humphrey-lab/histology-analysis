@@ -1,6 +1,4 @@
-function X = HSLfilter(Hpar, Spar, Lpar, H, A, color, bground)
-
-global stain layernm
+function X = HSLfilter(Hpar, Spar, Lpar, H, A, color, bground, stain, layernm)
 
 % Transform HSL image back to RGB colorspace for coupled color comparison
 RGB = colorspace('HSL->RGB',H);

@@ -571,7 +571,7 @@ end
 fname = outnm{IDX,:};
 
 % - Compile path to save image
-savepath = strcat(path,groupnm,'\',fname,'\');
+savepath = strcat(path,groupnm,'/',fname,'/');
 
 % - Create new directory, if needed
 if ~isdir(savepath);    mkdir(savepath);    end
@@ -581,9 +581,9 @@ if strcmpi(stain,'IF');    mfname = strrep(fname,rednm,mergenm);    else    mfna
 
 % - Save .mat file
 if strcmpi(tissue,'Myocardial Infarction         ');
-    save(strcat(path,groupnm,'\',fname,'\',mfname,'_partition_',char(vartype),'.mat'),'localpart','laplace_eqn');
+    save(strcat(path,groupnm,'/',fname,'/',mfname,'_partition_',char(vartype),'.mat'),'localpart','laplace_eqn');
 else
-    save(strcat(path,groupnm,'\',fname,'\',mfname,'_partition_',char(vartype),'.mat'),'localpart');
+    save(strcat(path,groupnm,'/',fname,'/',mfname,'_partition_',char(vartype),'.mat'),'localpart');
 end
 
 % Plot overlay of partitions (and indices) on original image
@@ -612,7 +612,7 @@ end
 % Extract color data from figure and write partitioned image to directory
 if imsave;
     set(gcf,'color','w');    f = getframe(gcf);
-    imwrite(f.cdata,strcat(path,groupnm,'\',fname,'\',mfname,'_partition_',char(vartype),'.tif'),'tif');
+    imwrite(f.cdata,strcat(path,groupnm,'/',fname,'/',mfname,'_partition_',char(vartype),'.tif'),'tif');
     close all force
 end
 

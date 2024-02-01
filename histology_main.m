@@ -176,11 +176,11 @@ while cancel < 1;
         
                 
         % Preprocessing of current image
-        if ~strcmpi(proc,'No to All') || (strcmpi(proc,'No to All') && ~exist(strcat(path,groupnm,'\',outnm{IDX,:}),'dir'))
+        if ~strcmpi(proc,'No to All') || (strcmpi(proc,'No to All') && ~exist(strcat(path,groupnm,'/',outnm{IDX,:}),'dir'))
             
             % Determine if current image needs to be processed
-            if exist(strcat(path,groupnm,'\',outnm{IDX,:}),'dir')
-                I = imread(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'.',ext));
+            if exist(strcat(path,groupnm,'/',outnm{IDX,:}),'dir')
+                I = imread(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'.',ext));
                 figure; imshow(I); set(gcf,'Name',char(strcat(outnm{IDX,:},' //',{' '},'Previously Processed Image')));
                 proc = questdlg('Adjust processed image?',char(strcat(stain,' //',{' '},'Image',{' '},num2str(IDX))),'Yes','No','No to All','No');      pause(0.1);     close all
             else
@@ -198,10 +198,10 @@ while cancel < 1;
         end
         
         % Select left ventricle, if required...
-        if strcmpi(tissue,'Myocardial Infarction         ') && (~strcmpi(procLV,'No to All') || (strcmpi(procLV,'No to All') && ~exist(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'),'file')));
+        if strcmpi(tissue,'Myocardial Infarction         ') && (~strcmpi(procLV,'No to All') || (strcmpi(procLV,'No to All') && ~exist(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'),'file')));
             
             % Determine if current image needs to be processed
-            if exist(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'),'file')
+            if exist(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'),'file')
                 procLV = questdlg('Re-select point inside ventricle?',char(strcat(stain,' //',{' '},'Image',{' '},num2str(IDX))),'Yes','No','No to All','No');      pause(0.1);
             else
                 procLV = 'Yes';
@@ -209,18 +209,18 @@ while cancel < 1;
             
             % Make and store selection
             if strcmpi(procLV,'Yes');
-                I = imread(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'.',ext));
+                I = imread(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'.',ext));
                 figure; imshow(I);  set(gcf,'Name','Select lumen of LEFT VENTRICLE');
                 jf = get(gcf,'JavaFrame');      pause(0.1);     set(jf,'Maximized',1);
                 
                 [lv_x,lv_y] = ginput(1);    close(gcf);    LV{IDX,1} = [lv_x,lv_y];
-                save(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'),'LV');
+                save(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'),'LV');
             else
-                LVo = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'));    LV{IDX,1} = LVo{1,1};
+                LVo = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'));    LV{IDX,1} = LVo{1,1};
             end
             
-        elseif strcmpi(tissue,'Myocardial Infarction         ') && (strcmpi(procLV,'No to All') && exist(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'),'file'));
-            LVo = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\ventricle-center.mat'));    LV{IDX,1} = LVo{1,1};
+        elseif strcmpi(tissue,'Myocardial Infarction         ') && (strcmpi(procLV,'No to All') && exist(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'),'file'));
+            LVo = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/ventricle-center.mat'));    LV{IDX,1} = LVo{1,1};
         end
         
     end
@@ -237,12 +237,12 @@ while cancel < 1;
             if IDX == 1;    fprintf(char(strcat('===== Variational Analysis - ',{' '},outnm{IDX,:},' =====\n')));    else    fprintf(char(strcat('\n===== Variational Analysis - ',{' '},outnm{IDX,:},' =====\n')));    end
             
             % Update current filepath and load image
-            fpstr = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:});         I = imread(strcat(fpstr,'.',ext));
+            fpstr = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:});         I = imread(strcat(fpstr,'.',ext));
             
             % Determine if current image needs to be processed
-            if ~strcmpi(proc,'No to All') || (strcmpi(proc,'No to All') && ~exist(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_thickness.mat'),'file'))
+            if ~strcmpi(proc,'No to All') || (strcmpi(proc,'No to All') && ~exist(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_thickness.mat'),'file'))
                 
-                if exist(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_thickness.mat'),'file');
+                if exist(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_thickness.mat'),'file');
                     proc = questdlg('Recompute wall thickness?',char(strcat(stain,' //',{' '},'Image',{' '},num2str(IDX))),'Yes','No','No to All','No');      pause(0.1);     close all
                 else
                     proc = 'Yes';
@@ -275,10 +275,10 @@ while cancel < 1;
                     % Load previously saved partitions
                     if npartr > 1 || npartq > 1
                         if strcmpi(tissue,'Myocardial Infarction         ');
-                            part = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
+                            part = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
                             localpart{IDX,1} = part.localpart;
                         else
-                            localpart{IDX,1} = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
+                            localpart{IDX,1} = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
                         end
                     else
                         localpart{IDX,1} = [];
@@ -291,10 +291,10 @@ while cancel < 1;
                 % Load previously saved partitions
                 if npartr > 1 || npartq > 1
                     if strcmpi(tissue,'Myocardial Infarction         ');
-                        part = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
+                        part = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
                         localpart{IDX,1} = part.localpart;
                     else
-                        localpart{IDX,1} = importdata(strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
+                        localpart{IDX,1} = importdata(strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:},'_partition_',char(vartype),'.mat'));
                     end
                 else
                     localpart{IDX,1} = [];
@@ -339,7 +339,7 @@ while cancel < 1;
             fprintf(char(strcat('\n======== Layer Analysis - ',{' '},outnm{IDX,:},' ========\n')));
             
             % Update current filepath
-            fpstr = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:});
+            fpstr = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:});
             
             % Define conditions in which to perform segmentation
             if nlayer == 2;
@@ -416,7 +416,7 @@ while cancel < 1;
             procopt = 2;    allno = 'No to All';
             
             % Update current filepath and load current image
-            fpstr = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:});     I = imread(strcat(fpstr,'.',ext));
+            fpstr = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:});     I = imread(strcat(fpstr,'.',ext));
             
             % Initialize array for storage of calculated wall percentages
             wptemp = zeros(nlayer-1,5);
@@ -477,7 +477,7 @@ while cancel < 1;
                 procopt = 3;    allno = 'Yes';
                 
                 % Update current filepath and load image
-                fpstr = strcat(path,groupnm,'\',outnm{IDX,:},'\',outnm{IDX,:});         I = imread(strcat(fpstr,'.',ext));
+                fpstr = strcat(path,groupnm,'/',outnm{IDX,:},'/',outnm{IDX,:});         I = imread(strcat(fpstr,'.',ext));
                 
                 % Setup partition labeling
                 if strcmpi(vartype,'circ');    vname = {'CIRC'};    elseif strcmpi(vartype,'rad');    vname = {'RAD'};    elseif strcmpi(vartype,'both');    vname = 'CIRC&RAD';    end
@@ -500,24 +500,24 @@ while cancel < 1;
     
     
     % -- Colorimetric analyses ---------------------------------------------
-    for IDX = 1:length(name(:,1));
+    parfor IDX = 1:length(name(:,1));
         
         fprintf(char(strcat('\n======== Color Analysis - ',{' '},outnm{IDX,:},' ========\n')));
         
-        [allstack, afdata, HSLav] = color_segmentation(IDX,[],[],fileform,1);
+        [allstack, afdata, HSLav] = color_segmentation(IDX,[],[],fileform,1, path, groupnm, outnm, tissue, stain, ext, SF, layer, layernm, rembleb, imsave, vartype, enhance);
         
         if layer
             for LDX = 1:nlayer
-                [allstack, afdata, HSLav] = color_segmentation(IDX,LDX,[],fileform,1);
+                [allstack, afdata, HSLav] = color_segmentation(IDX,LDX,[],fileform,1, path, groupnm, outnm, tissue, stain, ext, SF, layer, layernm, rembleb, imsave, vartype, enhance);
             end
         end
         
         if ~isempty(localpart{IDX,1})
-            [allstack, afdata, HSLav] = color_segmentation(IDX,[],localpart{IDX,1},fileform,1);
+            [allstack, afdata, HSLav] = color_segmentation(IDX,[],localpart{IDX,1},fileform,1, path, groupnm, outnm, tissue, stain, ext, SF, layer, layernm, rembleb, imsave, vartype, enhance);
             
             if layer
                 for LDX = 1:nlayer
-                    [allstack, afdata, HSLav] = color_segmentation(IDX,LDX,localpart{IDX,1},fileform,1);
+                    [allstack, afdata, HSLav] = color_segmentation(IDX,LDX,localpart{IDX,1},fileform,1, path, groupnm, outnm, tissue, stain, ext, SF, layer, layernm, rembleb, imsave, vartype, enhance);
                 end
             end
         end

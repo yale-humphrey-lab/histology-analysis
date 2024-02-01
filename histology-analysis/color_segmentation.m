@@ -1,27 +1,22 @@
-function [imstack, afrac, hslavg] = color_segmentation(IDX,LDX,localpart,fileform,indiv)
+function [imstack, afrac, hslavg] = color_segmentation(IDX,LDX,localpart,fileform,indiv, path, groupnm, outnm, tissue, stain, ext, SF, layer, layernm, rembleb, imsave, vartype, enhance)
 
 % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 % ADD: CASES FOR DIFFERENT TISSUES
 %      IMMUNOFLUORESCENCE ANALYSIS
 % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-% ===== Define global variables ===========================================
-global path groupnm outnm tissue
-global stain ext SF layer layernm rembleb
-global imsave vartype enhance
 
 % ===== Area fraction analysis ============================================
 % Extract name of image
 fname = outnm{IDX,:};
-
 % For single images...
 if indiv
     
     % Load current image for processing
     if layer && ~isempty(LDX)
-        I = imread(strcat(path,groupnm,'\',fname,'\',fname,'_',layernm{LDX,:},'.',ext));
+        I = imread(strcat(path,groupnm,'/',fname,'/',fname,'_',layernm{LDX,:},'.',ext));
     else
-        I = imread(strcat(path,groupnm,'\',fname,'\',fname,'.',ext));
+        I = imread(strcat(path,groupnm,'/',fname,'/',fname,'.',ext));
     end
     
     % Convert RGB image to binary and compute area/location of all pixel groups
@@ -58,7 +53,7 @@ if indiv
     if strcmpi(stain,'IHC');    I = 255 - I;    end
     
     if strcmpi(enhance,'Yes');
-        Io = imread(strcat(path,groupnm,'\',fname,'\',fname,'.',ext));    
+        Io = imread(strcat(path,groupnm,'/',fname,'/',fname,'.',ext));    
         H = colorspace('RGB->HSL',imadjust(I,stretchlim(Io)));
     elseif  strcmpi(enhance,'No');
         H = colorspace('RGB->HSL',I);
@@ -75,7 +70,7 @@ if indiv
             Slow = 0;      Sup = 1;        % Saturation
             Llow = 0.01;   Lup = 1;        % Lightness
             
-            P = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'b','black');
+            P = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'b','black', stain, layernm);
             
             [Havg_pol, Savg_pol, Lavg_pol] = HSLavg(P,H);
             
@@ -102,7 +97,7 @@ if indiv
 %             Llow = 0.27;    Lup = 1.0;     % Lightness
 %             Llow = 0.01;    Lup = 1.0;     % Lightness
             
-            C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','black');
+            C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','black', stain, layernm);
             
             [Havg_ihc, Savg_ihc, Lavg_ihc] = HSLavg(C,H);
             
@@ -112,7 +107,7 @@ if indiv
             Llow = 0.01; Lup = 1.0;      % Lightness
 %             Llow = 0;   Lup = 1.0;      % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','black');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','black', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_ihc = length(find(C(:,:,3) < 1));      % IHC antibody
@@ -139,14 +134,14 @@ if indiv
             Slow = 0.05;   Sup = 1.0;     % Saturation
             Llow = 0.0;    Lup = 0.78;    % Lightness
             
-            F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'b','white');
+            F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'b','white', stain, layernm);
             
             % HSL parameters to isolate FG pixels of NUCLEI
             Hlow = 212;    Hup = 42;      % Hue
             Slow = 0.05;   Sup = 1.0;     % Saturation
             Llow = 0.0;    Lup = 0.78;    % Lightness
             
-            B = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,F,'o','white');    %#ok
+            B = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,F,'o','white', stain, layernm);    %#ok
             
             fprintf('H&E ANALYSIS IS NOT YET FUNCTIONAL!!!!!\n');
             imstack = NaN;    afrac = NaN;    hslavg = NaN;
@@ -169,7 +164,7 @@ if indiv
                         Llow = 0;   Lup = 0.24;     % Lightness
                     end
                     
-                    E = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white');
+                    E = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white', stain, layernm);
                     
                     [Havg_eln, Savg_eln, Lavg_eln] = HSLavg(E,H);
                     
@@ -228,7 +223,7 @@ if indiv
                     Slow = 0.1;    Sup = 1;        % Saturation
                     Llow = 0.1;    Lup = 0.93;     % Lightness
                     
-                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,E,'r','white');
+                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,E,'r','white', stain, layernm);
                     
                     [Havg_tis, Savg_tis, Lavg_tis] = HSLavg(O,H);
                     
@@ -241,7 +236,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_eln = length(find(E(:,:,3) < 1));      % Elastin
@@ -271,7 +266,7 @@ if indiv
             Slow = 0.4;   Sup = 1;        % Saturation
             Llow = 0.3;   Lup = 0.75;     % Lightness
             
-            L = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white');
+            L = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white', stain, layernm);
             
             [Havg_lip, Savg_lip, Lavg_lip] = HSLavg(L,H);
             
@@ -280,7 +275,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_lip = length(find(L(:,:,3) < 1));      % Lipid
@@ -316,7 +311,7 @@ if indiv
                         Llow = 0;   Lup = 0.3;      % Lightness
                     end
                     
-                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white');
+                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white', stain, layernm);
                     
                     [Havg_cal, Savg_cal, Lavg_cal] = HSLavg(C,H);
                                         
@@ -327,7 +322,7 @@ if indiv
                     Slow = 0.1;    Sup = 1;        % Saturation
                     Llow = 0.1;    Lup = 0.93;     % Lightness
                     
-                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,C,'r','white');
+                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,C,'r','white', stain, layernm);
                     
                     [Havg_tis, Savg_tis, Lavg_tis] = HSLavg(O,H);
                     
@@ -340,7 +335,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_cal = length(find(C(:,:,3) < 1));      % Elastin
@@ -379,7 +374,7 @@ if indiv
                         Llow = 0.1;   Lup = 0.93;     % Lightness
                     end
                     
-                    S = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white');
+                    S = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white', stain, layernm);
                     
                     [Havg_cyt, Savg_cyt, Lavg_cyt] = HSLavg(S,H);
                     
@@ -418,7 +413,7 @@ if indiv
                     Slow = 0.1;    Sup = 1.0;     % Saturation
                     Llow = 0.1;    Lup = 0.93;    % Lightness
                     
-                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,S,'b','white');
+                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,S,'b','white', stain, layernm);
                     
                     [Havg_col, Savg_col, Lavg_col] = HSLavg(C,H);
                     
@@ -430,7 +425,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_cyt = length(find(S(:,:,3) < 1));      % Cytoplasm
@@ -464,7 +459,7 @@ if indiv
                     Slow = 0.1;   Sup = 1;        % Saturation
                     Llow = 0.01;   Lup = 0.93;    % Lightness
                     
-                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white');
+                    C = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','white', stain, layernm);
                     
                     [Havg_col, Savg_col, Lavg_col] = HSLavg(C,H);
                                         
@@ -475,7 +470,7 @@ if indiv
                     Slow = 0.1;    Sup = 1.0;     % Saturation
                     Llow = 0.1;    Lup = 0.93;    % Lightness
                     
-                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,C,'y','white');
+                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,C,'y','white', stain, layernm);
                     
                     [Havg_tis, Savg_tis, Lavg_tis] = HSLavg(O,H);
                     
@@ -487,7 +482,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_col = length(find(C(:,:,3) < 1));      % Collagen
@@ -522,7 +517,7 @@ if indiv
                     Llow = 0.10;    Lup = 0.93;     % Lightness    DSL 2022
 %                     Llow = 0.06;    Lup = 0.93;     % Lightness
                     
-                    R = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','black');
+                    R = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'r','black', stain, layernm);
                     
                     [Havg_red, Savg_red, Lavg_red] = HSLavg(R,H);
                     
@@ -534,7 +529,7 @@ if indiv
                     Llow = 0.10;    Lup = 0.93;     % Lightness    DSL 2022
 %                     Llow = 0.06;    Lup = 0.93;     % Lightness
                     
-                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,R,'o','black');
+                    O = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,R,'o','black', stain, layernm);
                     
                     [Havg_orn, Savg_orn, Lavg_orn] = HSLavg(O,H);
                     
@@ -546,7 +541,7 @@ if indiv
                     Llow = 0.10;    Lup = 0.93;     % Lightness    DSL 2022
 %                     Llow = 0.06;    Lup = 0.93;     % Lightness
                     
-                    Y = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(R+O-1),'y','black');
+                    Y = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(R+O-1),'y','black', stain, layernm);
                     
                     [Havg_yel, Savg_yel, Lavg_yel] = HSLavg(Y,H);
                     
@@ -558,7 +553,7 @@ if indiv
                     Llow = 0.10;    Lup = 0.93;     % Lightness    DSL 2022
 %                     Llow = 0.06;    Lup = 0.93;     % Lightness
                     
-                    G = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(R+O+Y-2),'g','black');
+                    G = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(R+O+Y-2),'g','black', stain, layernm);
                     
                     [Havg_grn, Savg_grn, Lavg_grn] = HSLavg(G,H);
                     
@@ -571,7 +566,7 @@ if indiv
             Llow = 0.10;   Lup = 1;     % Lightness    DSL 2022
             % Llow = 0.01;   Lup = 1;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','black');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','black', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_red = length(find(R(:,:,3) < 1));      % Red
@@ -638,7 +633,7 @@ if indiv
                     Llow = 0.22;   Lup = 0.81;     % Lightness
                     
 %                     G = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'b','white');
-                    G = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,E,'b','white');
+                    G = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,E,'b','white', stain, layernm);
                     
                     [Havg_gag, Savg_gag, Lavg_gag] = HSLavg(G,H);
                     
@@ -666,7 +661,7 @@ if indiv
                     
 %                     F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(C+E+G-2),'m','white');
 %                     F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(M+E+G-2),'m','white');
-                    F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(E+G-1),'m','white');
+                    F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(E+G-1),'m','white', stain, layernm);
                     
                     [Havg_fib, Savg_fib, Lavg_fib] = HSLavg(F,H);
                     
@@ -713,7 +708,7 @@ if indiv
                     end
                     
 %                     E = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,G,'k','white');
-                    E = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white');
+                    E = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'k','white', stain, layernm);
                     
                     [Havg_eln, Savg_eln, Lavg_eln] = HSLavg(E,H);
                     
@@ -798,7 +793,7 @@ if indiv
                     
 %                     M = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(C+E+G+F-3),'r','white');
 %                     M = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(E+G-1),'r','white');
-                    M = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(E+G+F-2),'r','white');
+                    M = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(E+G+F-2),'r','white', stain, layernm);
                     
                     [Havg_cyt, Savg_cyt, Lavg_cyt] = HSLavg(M,H);
                     
@@ -809,7 +804,7 @@ if indiv
                     Slow = 0;   Sup = 1;        % Saturation
                     Llow = 0;   Lup = 0.99;     % Lightness
                     
-                    T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+                    T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
                     
                     % HSL parameters to isolate all FIBRIN pixels
 %                     Hlow = 262;    Hup = 11;       % Hue
@@ -831,7 +826,7 @@ if indiv
                     Slow = 0.37;   Sup = 0.70;     % Saturation
                     Llow = 0.22;   Lup = 0.93;     % Lightness
                     
-                    F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(E+G-1),'m','white');
+                    F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(E+G-1),'m','white', stain, layernm);
 %                     F = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,(E+G-1),'m','white');
                     
                     % Compute number of identified constituent pixels
@@ -845,7 +840,7 @@ if indiv
                     
 %                     C1 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(E+G-1),'y','white');
 %                     C1 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(M+E+G-2),'y','white');
-                    C1 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(M+E+G+F-3),'y','white');
+                    C1 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(M+E+G+F-3),'y','white', stain, layernm);
 
                     % HSL parameters to isolate YELLOW-BROWN pixels of COLLAGEN (part 3)
 %                     Hlow = 30;     Hup = 88;       % Hue
@@ -863,7 +858,7 @@ if indiv
                     Llow = 0.32;    Lup = 0.75;     % Lightness
                     
 %                     C3 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(C1+E+G-2),'y','white');
-                    C3 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(C1+M+E+G-3),'y','white');
+                    C3 = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,abs(C1+M+E+G-3),'y','white', stain, layernm);
                     
                     % Compare color isolations to identify YELLOW-BROWN pixels of COLLAGEN based on saturation level
                     Cmsk = C1(:,:,3) + C3(:,:,3);
@@ -886,7 +881,7 @@ if indiv
             Slow = 0;   Sup = 1;        % Saturation
             Llow = 0;   Lup = 0.99;     % Lightness
             
-            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white');
+            T = HSLfilter([Hlow Hup],[Slow Sup],[Llow Lup],H,[],'g','white', stain, layernm);
             
             % Compute number of identified constituent pixels
             pix_gag = length(find(G(:,:,3) < 1));      % Ground Substance (GAG)
@@ -927,12 +922,12 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\IHC_',fname,'_ihc-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\IHC_',fname,'_total-',layernm{LDX,:},'.tif'));    HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/IHC_',fname,'_ihc-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/IHC_',fname,'_total-',layernm{LDX,:},'.tif'));    HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\IHC_',fname,'_ihc.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\IHC_',fname,'_total.tif'));    HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/IHC_',fname,'_ihc.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/IHC_',fname,'_total.tif'));    HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -987,14 +982,14 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                E = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_elastin-',layernm{LDX,:},'.tif'));      HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_tissue-',layernm{LDX,:},'.tif'));       HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_total-',layernm{LDX,:},'.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                E = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_elastin-',layernm{LDX,:},'.tif'));      HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_tissue-',layernm{LDX,:},'.tif'));       HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_total-',layernm{LDX,:},'.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                E = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_elastin.tif'));      HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_tissue.tif'));       HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\VVG_',fname,'_total.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                E = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_elastin.tif'));      HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_tissue.tif'));       HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/VVG_',fname,'_total.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1046,14 +1041,14 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_calcification-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_tissue-',layernm{LDX,:},'.tif'));             HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_total-',layernm{LDX,:},'.tif'));              HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_calcification-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_tissue-',layernm{LDX,:},'.tif'));             HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_total-',layernm{LDX,:},'.tif'));              HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_calcification.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_tissue.tif'));             HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_total.tif'));              HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_calcification.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_tissue.tif'));             HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_total.tif'));              HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1105,14 +1100,14 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                S = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_cytoplasm-',layernm{LDX,:},'.tif'));    HS = colorspace('RGB->HSL',S);     HS3 = HS(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_collagen-',layernm{LDX,:},'.tif'));     HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_total-',layernm{LDX,:},'.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                S = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_cytoplasm-',layernm{LDX,:},'.tif'));    HS = colorspace('RGB->HSL',S);     HS3 = HS(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_collagen-',layernm{LDX,:},'.tif'));     HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_total-',layernm{LDX,:},'.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                S = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_cytoplasm.tif'));    HS = colorspace('RGB->HSL',S);     HS3 = HS(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_collagen.tif'));     HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\MTC_',fname,'_total.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                S = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_cytoplasm.tif'));    HS = colorspace('RGB->HSL',S);     HS3 = HS(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_collagen.tif'));     HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/MTC_',fname,'_total.tif'));        HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1164,14 +1159,14 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_collagen-',layernm{LDX,:},'.tif'));       HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_tissue-',layernm{LDX,:},'.tif'));         HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_total-',layernm{LDX,:},'.tif'));          HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_collagen-',layernm{LDX,:},'.tif'));       HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_tissue-',layernm{LDX,:},'.tif'));         HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_total-',layernm{LDX,:},'.tif'));          HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_collagen.tif'));       HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_tissue.tif'));         HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\bPSR_',fname,'_total.tif'));          HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_collagen.tif'));       HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_tissue.tif'));         HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/bPSR_',fname,'_total.tif'));          HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1223,18 +1218,18 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                R = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_red-',layernm{LDX,:},'.tif'));       HR = colorspace('RGB->HSL',R);     HR3 = HR(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_orange-',layernm{LDX,:},'.tif'));    HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                Y = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_yellow-',layernm{LDX,:},'.tif'));    HY = colorspace('RGB->HSL',Y);     HY3 = HY(:,:,3);
-                G = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_green-',layernm{LDX,:},'.tif'));     HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_total-',layernm{LDX,:},'.tif'));     HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                R = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_red-',layernm{LDX,:},'.tif'));       HR = colorspace('RGB->HSL',R);     HR3 = HR(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_orange-',layernm{LDX,:},'.tif'));    HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                Y = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_yellow-',layernm{LDX,:},'.tif'));    HY = colorspace('RGB->HSL',Y);     HY3 = HY(:,:,3);
+                G = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_green-',layernm{LDX,:},'.tif'));     HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_total-',layernm{LDX,:},'.tif'));     HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                R = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_red.tif'));       HR = colorspace('RGB->HSL',R);     HR3 = HR(:,:,3);
-                O = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_orange.tif'));    HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
-                Y = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_yellow.tif'));    HY = colorspace('RGB->HSL',Y);     HY3 = HY(:,:,3);
-                G = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_green.tif'));     HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\dPSR_',fname,'_total.tif'));     HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                R = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_red.tif'));       HR = colorspace('RGB->HSL',R);     HR3 = HR(:,:,3);
+                O = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_orange.tif'));    HO = colorspace('RGB->HSL',O);     HO3 = HO(:,:,3);
+                Y = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_yellow.tif'));    HY = colorspace('RGB->HSL',Y);     HY3 = HY(:,:,3);
+                G = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_green.tif'));     HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/dPSR_',fname,'_total.tif'));     HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1292,20 +1287,20 @@ if indiv
             % Load images
             if layer && ~isempty(LDX)
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                G = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_gag-',layernm{LDX,:},'.tif'));           HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
-                F = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_fibrin-',layernm{LDX,:},'.tif'));        HF = colorspace('RGB->HSL',F);     HF3 = HF(:,:,3);
-                E = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_elastin-',layernm{LDX,:},'.tif'));       HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
-                M = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_cytoplasm-',layernm{LDX,:},'.tif'));     HM = colorspace('RGB->HSL',M);     HM3 = HM(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_collagen-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_total-',layernm{LDX,:},'.tif'));         HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                G = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_gag-',layernm{LDX,:},'.tif'));           HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
+                F = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_fibrin-',layernm{LDX,:},'.tif'));        HF = colorspace('RGB->HSL',F);     HF3 = HF(:,:,3);
+                E = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_elastin-',layernm{LDX,:},'.tif'));       HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
+                M = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_cytoplasm-',layernm{LDX,:},'.tif'));     HM = colorspace('RGB->HSL',M);     HM3 = HM(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_collagen-',layernm{LDX,:},'.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_total-',layernm{LDX,:},'.tif'));         HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             else
                 H1 = H(:,:,1);   H2 = H(:,:,2);   H3 = H(:,:,3);
-                G = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_gag.tif'));           HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
-                F = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_fibrin.tif'));        HF = colorspace('RGB->HSL',F);     HF3 = HF(:,:,3);
-                E = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_elastin.tif'));       HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
-                M = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_cytoplasm.tif'));     HM = colorspace('RGB->HSL',M);     HM3 = HM(:,:,3);
-                C = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_collagen.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
-                T = imread(strcat(path,groupnm,'\',fname,'\MOV_',fname,'_total.tif'));         HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
+                G = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_gag.tif'));           HG = colorspace('RGB->HSL',G);     HG3 = HG(:,:,3);
+                F = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_fibrin.tif'));        HF = colorspace('RGB->HSL',F);     HF3 = HF(:,:,3);
+                E = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_elastin.tif'));       HE = colorspace('RGB->HSL',E);     HE3 = HE(:,:,3);
+                M = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_cytoplasm.tif'));     HM = colorspace('RGB->HSL',M);     HM3 = HM(:,:,3);
+                C = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_collagen.tif'));      HC = colorspace('RGB->HSL',C);     HC3 = HC(:,:,3);
+                T = imread(strcat(path,groupnm,'/',fname,'/MOV_',fname,'_total.tif'));         HT = colorspace('RGB->HSL',T);     HT3 = HT(:,:,3);
             end
             
             % Count total pixels
@@ -1452,43 +1447,43 @@ else
             % Setup correct filepaths based on type of analysis
             if indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
                 addpart = false;    addname = false;    addtot = false;    type = 1;
-                fid1 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_HSL.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_HSL.txt'),'w');
                 
             elseif indiv && (layer && ~isempty(LDX)) && ~iscell(af)
                 addpart = false;    addname = false;    addtot = false;    type = 1;
-                fid1 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF_',layernm{LDX,:},'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_HSL_',layernm{LDX,:},'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF_',layernm{LDX,:},'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_HSL_',layernm{LDX,:},'.txt'),'w');
                 
             elseif indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
                 addpart = true;    addname = false;    addtot = true;    type = 2;
-                fid1 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF_',char(vartype),'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_HSL_',char(vartype),'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF_',char(vartype),'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_HSL_',char(vartype),'.txt'),'w');
                 
             elseif indiv && (layer && ~isempty(LDX)) && iscell(af)
                 addpart = true;    addname = false;    addtot = true;    type = 2;
-                fid1 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_HSL_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_HSL_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
                 addpart = false;    addname = true;    addtot = false;    type = 3;
-                fid1 = fopen(strcat(path,groupnm,'\All_',groupnm,'_AF.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\All_',groupnm,'_HSL.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/All_',groupnm,'_AF.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/All_',groupnm,'_HSL.txt'),'w');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && ~iscell(af)
                 addpart = false;    addname = true;    addtot = false;    type = 3;
-                fid1 = fopen(strcat(path,groupnm,'\All_',groupnm,'_AF_',layernm{LDX,:},'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\All_',groupnm,'_HSL_',layernm{LDX,:},'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/All_',groupnm,'_AF_',layernm{LDX,:},'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/All_',groupnm,'_HSL_',layernm{LDX,:},'.txt'),'w');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
                 addpart = true;    addname = true;    addtot = true;    type = 4;
-                fid1 = fopen(strcat(path,groupnm,'\All_',groupnm,'_AF_',char(vartype),'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\All_',groupnm,'_HSL_',char(vartype),'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/All_',groupnm,'_AF_',char(vartype),'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/All_',groupnm,'_HSL_',char(vartype),'.txt'),'w');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && iscell(af)
                 addpart = true;    addname = true;    addtot = true;    type = 4;
-                fid1 = fopen(strcat(path,groupnm,'\All_',groupnm,'_AF_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
-                fid2 = fopen(strcat(path,groupnm,'\All_',groupnm,'_HSL_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
+                fid1 = fopen(strcat(path,groupnm,'/All_',groupnm,'_AF_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
+                fid2 = fopen(strcat(path,groupnm,'/All_',groupnm,'_HSL_',layernm{LDX,:},'-',char(vartype),'.txt'),'w');
             end
             
             % Build formatted strings for text headers
@@ -1578,35 +1573,35 @@ else
             % Setup file paths based on type of analysis
             if indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
                 addpart = false;    addname = false;    addtot = false;    type = 1;
-                fpath = strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'.xls');
+                fpath = strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'.xls');
                 
             elseif indiv && (layer && ~isempty(LDX)) && ~iscell(af)
                 addpart = false;    addname = false;    addtot = false;    type = 1;
-                fpath = strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',layernm{LDX,:},'.xls');
+                fpath = strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',layernm{LDX,:},'.xls');
                 
             elseif indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
                 addpart = true;    addname = false;    addtot = true;    type = 2;
-                fpath = strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',char(vartype),'.xls');
                 
             elseif indiv && (layer && ~isempty(LDX)) && iscell(af)
                 addpart = true;    addname = false;    addtot = true;    type = 2;
-                fpath = strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',layernm{LDX,:},'-',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',layernm{LDX,:},'-',char(vartype),'.xls');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
                 addpart = false;    addname = true;    addtot = false;    type = 3;
-                fpath = strcat(path,groupnm,'\All_',groupnm,'.xls');
+                fpath = strcat(path,groupnm,'/All_',groupnm,'.xls');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && ~iscell(af)
                 addpart = false;    addname = true;    addtot = false;    type = 3;
-                fpath = strcat(path,groupnm,'\All_',groupnm,'_',layernm{LDX,:},'.xls');
+                fpath = strcat(path,groupnm,'/All_',groupnm,'_',layernm{LDX,:},'.xls');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
                 addpart = true;    addname = true;    addtot = true;    type = 4;
-                fpath = strcat(path,groupnm,'\All_',groupnm,'_',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/All_',groupnm,'_',char(vartype),'.xls');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && iscell(af)
                 addpart = true;    addname = true;    addtot = true;    type = 4;
-                fpath = strcat(path,groupnm,'\All_',groupnm,'_',layernm{LDX,:},'-',char(vartype),'.xls');
+                fpath = strcat(path,groupnm,'/All_',groupnm,'_',layernm{LDX,:},'-',char(vartype),'.xls');
             end
             
             % Build formatted strings for text headers
@@ -1644,28 +1639,28 @@ else
             
             % Setup correct filepaths based on type of analysis
             if indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
-                save(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF-HSL.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF-HSL.mat'),'af','hsl');
                 
             elseif indiv && (layer && ~isempty(LDX)) && ~iscell(af)
-                save(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF-HSL_',layernm{LDX,:},'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF-HSL_',layernm{LDX,:},'.mat'),'af','hsl');
                 
             elseif indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
-                save(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF-HSL_',char(vartype),'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF-HSL_',char(vartype),'.mat'),'af','hsl');
                 
             elseif indiv && (layer && ~isempty(LDX)) && iscell(af)
-                save(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF-HSL_',layernm{LDX,:},'-',char(vartype),'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF-HSL_',layernm{LDX,:},'-',char(vartype),'.mat'),'af','hsl');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && ~iscell(af)
-                save(strcat(path,groupnm,'\All_',groupnm,'_AF-HSL.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/All_',groupnm,'_AF-HSL.mat'),'af','hsl');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && ~iscell(af)
-                save(strcat(path,groupnm,'\All_',groupnm,'_AF-HSL_',layernm{LDX,:},'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/All_',groupnm,'_AF-HSL_',layernm{LDX,:},'.mat'),'af','hsl');
                 
             elseif ~indiv && (~layer || (layer && isempty(LDX))) && iscell(af)
-                save(strcat(path,groupnm,'\All_',groupnm,'_AF-HSL_',char(vartype),'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/All_',groupnm,'_AF-HSL_',char(vartype),'.mat'),'af','hsl');
                 
             elseif ~indiv && (layer && ~isempty(LDX)) && iscell(af)
-                save(strcat(path,groupnm,'\All_',groupnm,'_AF-HSL_',layernm{LDX,:},'-',char(vartype),'.mat'),'af','hsl');
+                save(strcat(path,groupnm,'/All_',groupnm,'_AF-HSL_',layernm{LDX,:},'-',char(vartype),'.mat'),'af','hsl');
             end
             
         end
@@ -1683,9 +1678,9 @@ if imsave && indiv && isempty(localpart);
     
     for II = 1:length(cnm);
         if (layer && ~isempty(LDX))
-            imwrite(imstack(:,:,:,II),strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-',layernm{LDX,:},'.tif'),'tif');
+            imwrite(imstack(:,:,:,II),strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-',layernm{LDX,:},'.tif'),'tif');
         else
-            imwrite(imstack(:,:,:,II),strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'.tif'),'tif');
+            imwrite(imstack(:,:,:,II),strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'.tif'),'tif');
         end
     end
 
@@ -1705,9 +1700,9 @@ if imsave && indiv && isempty(localpart);
     
     % Save pseudocolored image
     if (layer && ~isempty(LDX))
-        imwrite(Ip,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_combined-',layernm{LDX,:},'.tif'),'tif');
+        imwrite(Ip,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_combined-',layernm{LDX,:},'.tif'),'tif');
     else
-        imwrite(Ip,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_combined.tif'),'tif');
+        imwrite(Ip,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_combined.tif'),'tif');
     end
        
 elseif imsave && indiv && ~isempty(localpart);
@@ -1727,9 +1722,9 @@ elseif imsave && indiv && ~isempty(localpart);
         set(gcf,'color','w');    f = getframe(gcf);
         
         if (layer && ~isempty(LDX))
-            imwrite(f.cdata,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-',layernm{LDX,:},'-partition-',char(vartype),'.tif'),'tif');
+            imwrite(f.cdata,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-',layernm{LDX,:},'-partition-',char(vartype),'.tif'),'tif');
         else
-            imwrite(f.cdata,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-partition-',char(vartype),'.tif'),'tif');
+            imwrite(f.cdata,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-partition-',char(vartype),'.tif'),'tif');
         end
         
         close all force
@@ -1763,9 +1758,9 @@ elseif imsave && indiv && ~isempty(localpart);
     set(gcf,'color','w');    f = getframe(gcf);
     
     if (layer && ~isempty(LDX))
-        imwrite(f.cdata,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_combined-',layernm{LDX,:},'-partition-',char(vartype),'.tif'),'tif');
+        imwrite(f.cdata,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_combined-',layernm{LDX,:},'-partition-',char(vartype),'.tif'),'tif');
     else
-        imwrite(f.cdata,strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_combined-partition-',char(vartype),'.tif'),'tif');
+        imwrite(f.cdata,strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_combined-partition-',char(vartype),'.tif'),'tif');
     end
     
     close all force

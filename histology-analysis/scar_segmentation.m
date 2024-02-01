@@ -8,12 +8,12 @@ global imsave
 % ===== Scar morphological analysis ============================================
 % Extract name and open processed image
 fname = outnm{IDX,:};
-I = imread(strcat(path,groupnm,'\',fname,'\',fname,'.',ext));
+I = imread(strcat(path,groupnm,'/',fname,'/',fname,'.',ext));
 
 % Open results of partitioning analysis
-af = importdata(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_AF-HSL_circ.mat'));    af = cell2mat(af.af);    % Area fractions
-TH = importdata(strcat(path,groupnm,'\',fname,'\',fname,'_thickness.mat'));                th = TH.avg;             % Thickness
-LP = importdata(strcat(path,groupnm,'\',fname,'\',fname,'_partition_circ.mat'));                                    % Local partitions
+af = importdata(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_AF-HSL_circ.mat'));    af = cell2mat(af.af);    % Area fractions
+TH = importdata(strcat(path,groupnm,'/',fname,'/',fname,'_thickness.mat'));                th = TH.avg;             % Thickness
+LP = importdata(strcat(path,groupnm,'/',fname,'/',fname,'_partition_circ.mat'));                                    % Local partitions
 
 % Register thickness and area fraction locations
 midx = NaN(size(LP.localpart,1),1);
@@ -119,7 +119,7 @@ intersect.nonscar.af.std    = std(intersect.nonscar.af.local);
 intersect.nonscar.length.degree = 360-intersect.scar.length.degree;
 intersect.nonscar.length.percent = 100-intersect.scar.length.percent; %#ok
 
-save(strcat(path,groupnm,'\',fname,'\',fname,'_scar-properties.mat'),'intersect')
+save(strcat(path,groupnm,'/',fname,'/',fname,'_scar-properties.mat'),'intersect')
 
 % ----- Plotting ----------------------------------------------------------
 scrsz = get(0,'ScreenSize');
@@ -140,7 +140,7 @@ ylim([0,1.15]);    set(gca,'FontSize',13);
 
 % Save figure
 set(gcf,'PaperPositionMode','auto');
-print('-dtiff','-r300',strcat(path,groupnm,'\',fname,'\',fname,'_local-properties.tif'));
+print('-dtiff','-r300',strcat(path,groupnm,'/',fname,'/',fname,'_local-properties.tif'));
 close(gcf);
 
 % Identified scar locations
@@ -153,7 +153,7 @@ plot(th_mid(idx2+sidx-1,2),th_mid(idx2+sidx-1,1),'ro','MarkerFaceColor','r','Mar
 
 % Save image
 set(gcf,'color','w');    F = getframe(gcf);
-imwrite(F.cdata,strcat(path,groupnm,'\',fname,'\',fname,'_scar-location.tif'),'tif');
+imwrite(F.cdata,strcat(path,groupnm,'/',fname,'/',fname,'_scar-location.tif'),'tif');
 
 
 % % Partition centroids for theta offsets
@@ -236,7 +236,7 @@ while strcmpi(proc,'Yes');
     manual.nonscar.length.degree = 360-manual.scar.length.degree;
     manual.nonscar.length.percent = 100-manual.scar.length.percent;
     
-    save(strcat(path,groupnm,'\',fname,'\',fname,'_scar-properties.mat'),'intersect','manual')
+    save(strcat(path,groupnm,'/',fname,'/',fname,'_scar-properties.mat'),'intersect','manual')
     
     % ----- Re-Plotting ----------------------------------------------------------
     scrsz = get(0,'ScreenSize');
@@ -259,7 +259,7 @@ while strcmpi(proc,'Yes');
     
     % Save figure
     set(gcf,'PaperPositionMode','auto');
-    print('-dtiff','-r300',strcat(path,groupnm,'\',fname,'\',fname,'_local-properties.tif'));
+    print('-dtiff','-r300',strcat(path,groupnm,'/',fname,'/',fname,'_local-properties.tif'));
     close(gcf);
     
     % Identified scar locations
@@ -272,7 +272,7 @@ while strcmpi(proc,'Yes');
     
     % Save image
     set(gcf,'color','w');    F = getframe(gcf);
-    imwrite(F.cdata,strcat(path,groupnm,'\',fname,'\',fname,'_scar-location.tif'),'tif');
+    imwrite(F.cdata,strcat(path,groupnm,'/',fname,'/',fname,'_scar-location.tif'),'tif');
     
     proc = questdlg('Manually adjust scar location?','Adjust','Yes','No','No');
 end
@@ -351,14 +351,14 @@ Imsk1 = inpoly(cat(2,X(:),Y(:)),cat(2,cat(1,TH.bound.inner(IR1,2),TH.bound.outer
 Imsk2 = inpoly(cat(2,X(:),Y(:)),cat(2,cat(1,TH.bound.inner(IR2,2),TH.bound.outer(OR2,2)),cat(1,TH.bound.inner(IR2,1),TH.bound.outer(OR2,1))));    Imsk2 = reshape(Imsk2,size(X));
 
 % Load pseudocolored masks for global area fraction calculation
-COL = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_collagen.tif'));
-TOT = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_total.tif'));
+COL = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_collagen.tif'));
+TOT = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_total.tif'));
 if strcmpi(stain,'MTC');
-    OTH = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_cytoplasm.tif'));
+    OTH = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_cytoplasm.tif'));
 elseif strcmpi(stain,'bPSR');
-    OTH = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_tissue.tif'));
+    OTH = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_tissue.tif'));
 end
-COM = imread(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_combined.tif'));
+COM = imread(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_combined.tif'));
 
 
 % Mask images of scar/nonscar regions
@@ -419,8 +419,8 @@ end
 % Save images of scar segmentation
 if imsave
     for II = 1:length(cnm);
-        imwrite(imstack_scar(:,:,:,II),strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-scar.tif'),'tif');
-        imwrite(imstack_non(:,:,:,II),strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-nonscar.tif'),'tif');
+        imwrite(imstack_scar(:,:,:,II),strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-scar.tif'),'tif');
+        imwrite(imstack_non(:,:,:,II),strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'_',strcat(lower(cnm{II,1}(1)),cnm{II,1}(2:end)),'-nonscar.tif'),'tif');
     end
 end
 
@@ -439,13 +439,13 @@ for II = 1:length(fileform);
         
         afcon = cat(1,{'Image Number'},afcon_pix,{'Total Pix'},afcon_per);
         cwidth = 20*ones(1,length(afcon));    cwidth(1) = 15;
-        fpath = strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'-interstitial-fib.xls');
+        fpath = strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'-interstitial-fib.xls');
         
         xlsformat(fpath,afcon,cwidth,af_scar,af_non);
         
     elseif strcmpi(fileform{II},'.mat');
         
-        save(strcat(path,groupnm,'\',fname,'\',stain,'_',fname,'-interstitial-fib.mat'),'af_scar','af_non');
+        save(strcat(path,groupnm,'/',fname,'/',stain,'_',fname,'-interstitial-fib.mat'),'af_scar','af_non');
 
     end
 end

@@ -5,15 +5,15 @@ global path groupnm outnm
 global stain imsave ext
 
 % Make sure that all libraries needed for fast marching have been compiled and added correctly
-if ~exist(strcat('histology-analysis\fm\perform_front_propagation_2d.mexw64'),'file');
+if ~exist(strcat('histology-analysis/fm/perform_front_propagation_2d.mexw64'),'file');
     
     % Change current directory
-    cd histology-analysis\fm\
+    cd histology-analysis/fm/
     
     % Setup C++ compiler, compile mex files, and reset directory
     mex -setup c++
-    mex .\mex\perform_front_propagation_2d.cpp .\mex\perform_front_propagation_2d_mex.cpp .\mex\fib.cpp
-    cd ..\..
+    mex ./mex/perform_front_propagation_2d.cpp ./mex/perform_front_propagation_2d_mex.cpp ./mex/fib.cpp
+    cd ../..
     
 end
 
@@ -110,7 +110,7 @@ thavg = cat(1,thavg,thavg(1));
 fname = outnm{IDX,:};
 
 % Compile path to save image
-savepath = strcat(path,groupnm,'\',fname,'\');
+savepath = strcat(path,groupnm,'/',fname,'/');
 
 % Create new directory, if needed
 if ~isdir(savepath);    mkdir(savepath);    end
@@ -134,7 +134,7 @@ if imsave
     set(gca,'visible','off');  colorbar;  set(gca,'FontSize',16)
     
     set(gcf,'PaperPositionMode','auto')
-    print('-dpng','-r300',strcat(path,groupnm,'\',fname,'\',mfname,'_thickness-map.',ext));
+    print('-dpng','-r300',strcat(path,groupnm,'/',fname,'/',mfname,'_thickness-map.',ext));
     close(gcf);
     
     % Plot and save thickness variation line plot
@@ -145,7 +145,7 @@ if imsave
     ax = gca;  ax.XTick = [0,90,180,270,360];  ax.XTickLabels = {'0','90','180','270','360'};  set(gca,'FontSize',13)
     
     set(gcf,'PaperPositionMode','auto')
-    print('-dpng','-r300',strcat(path,groupnm,'\',fname,'\',mfname,'_thickness-var.',ext));
+    print('-dpng','-r300',strcat(path,groupnm,'/',fname,'/',mfname,'_thickness-var.',ext));
     close(gcf);
 end
 
@@ -154,7 +154,7 @@ clear Wavg;    Wavg = cat(2,theta',thavg);
 
 thick.map = W;                 thick.norm = Wb;           thick.avg = Wavg;
 thick.bound.inner = ibound;    thick.bound.mid = Wbnd;    thick.bound.outer = obound;
-save(strcat(path,groupnm,'\',fname,'\',mfname,'_thickness.mat'),'thick');
+save(strcat(path,groupnm,'/',fname,'/',mfname,'_thickness.mat'),'thick');
 
 close all force
 
